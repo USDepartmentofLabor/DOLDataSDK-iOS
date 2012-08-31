@@ -10,6 +10,7 @@
 #import "DOLDataUtils.h"
 #import "ASIHTTPRequest.h"
 #import "JSON.h"
+#import "XMLReader.h"
 
 @implementation GOVDataRequest
 
@@ -90,6 +91,14 @@
                 //Append the argument to the querystring we are building
                 [queryString appendFormat:@"$%@=%@",key, [value urlEncoded]];
             }
+        } else {
+            if ([queryString length] == 0) {
+                [queryString appendString:@"?"];
+            } else {
+                [queryString appendString:@"&"];
+            }
+            //Append the argument to the querystring we are building
+            [queryString appendFormat:@"%@=%@",key, [value urlEncoded]];
         }
         //END DOL
     }
@@ -108,6 +117,8 @@
         //Add authorization header to the request
         [DOLDataUtils addAuthorizationHeaderToRequest:request withContext:self.context];
     }
+    
+    NSLog(@"%@", url);
         
     //Perform the request
     [request setTimeOutSeconds:timeOut];
@@ -126,8 +137,18 @@
 	NSLog(@"Webmethod returned %llu bytes", [request contentLength]);
 	//NSLog(@"%@", [request responseString]);
     
-    //Read response to a string
-    NSString *jsonString = [request responseString];
+    //Read response to a string.  Still called "jsonString" for convenience
+    NSString *jsonString;
+    
+    //First, check to see if it's XML
+    if ([[[request responseString] substringToIndex:1] isEqualToString:@"<"]) {
+        //If XML, then parse into an NSDictionary and call the appropriate call-back method.
+        NSError *error = nil;
+        NSDictionary *xmlDictionaryResults = [[XMLReader dictionaryForXMLString:[request responseString] error:&error] retain];
+        [self.delegate govDataRequest:self didCompleteWithDictionaryResults:xmlDictionaryResults];
+    } else {
+        jsonString = [request responseString];
+    }
     
     //NSLog(@"RESPONSE (%d) = \n%@", [request responseStatusCode], jsonString);
     
@@ -155,7 +176,7 @@
         }
         
         [self.delegate govDataRequest:self didCompleteWithError:errorMessage];
-    } else {
+    } else if ([[[request responseString] substringToIndex:1] isEqualToString:@"{"]){
         //Use JSON parser to convert the string into a dictionary
         NSDictionary *results = [jsonString JSONValue];  
         

@@ -22,6 +22,7 @@
     
     GOVDataContext *context;
     
+    
 }
 
 //Context object to provide keys and URL
@@ -29,6 +30,7 @@
 
 //Delegate for callback methods
 @property(nonatomic,assign)id<GOVDataRequestDelegate>delegate;
+
 
 //The main method of the GOVData SDK.
 //Triggers entire chain of events to calls HTTP methods:
