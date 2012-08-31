@@ -5,8 +5,9 @@
 \red56\green56\blue59;\red0\green77\blue127;\red0\green115\blue109;\red13\green35\blue105;\red255\green0\blue50;
 \red7\green0\blue255;}
 {\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}
-{\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid2}}
-{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}}
+{\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid2}
+{\list\listtemplateid3\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid201\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid3}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}{\listoverride\listid3\listoverridecount0\ls3}}
 \margl1440\margr1440\vieww13440\viewh20220\viewkind0
 \deftab720
 \pard\pardeftab720\li200\sa100
@@ -127,6 +128,8 @@ You can also pass arguments to the API call by adding them to a NSDictionary as 
 {\listtext	\'95	}Call the 
 \b callAPIMethod
 \b0  method, passing the API name and the arguments (or null if there are no arguments)\
+\pard\tx720\pardeftab720\sa80
+\cf0 \
 \pard\pardeftab720\li200\sa100
 \cf0 \ul \ulc0 Sample code to make requests for standard DOL API datasets:\ulnone \
 \pard\pardeftab720
@@ -174,6 +177,18 @@ dataRequest\cf3 .\cf8 delegate\cf5  \cf3 =\cf5  \cf8 self\cf3 ;\cf5  \
 \pard\pardeftab720
 
 \f0 \cf0 \cb1 \
+
+\fs26 The example above uses DOL's API.  Some federal APIs' URLs are structured differently.  For example, let's look at http://data.fcc.gov/api/block/find?latitude=40.0&longitude=-85\
+\
+\pard\tx220\tx720\pardeftab720\li720\fi-720
+\ls3\ilvl0\cf0 {\listtext	\'95	}API_KEY = ""\
+\ls3\ilvl0{\listtext	\'95	}API_SECRET = ""\
+{\listtext	\'95	}API_Host = "http://data.fcc.gov"\
+{\listtext	\'95	}API_URL = "/api/block"\
+{\listtext	\'95	}method = "find"
+\fs32 \
+\pard\pardeftab720
+\cf0 \
 \pard\pardeftab720\li200\sa100
 
 \fs26 \cf0 \ul Sample code to make requests for DOL Service Operation (e.g Summer Jobs Plus) :\ulnone \
