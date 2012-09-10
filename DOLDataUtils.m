@@ -8,11 +8,11 @@
 
 #import "DOLDataUtils.h"
 #import <CommonCrypto/CommonHMAC.h>
-#import "DOLDataContext.h"
+#import "GOVDataContext.h"
 
 @implementation DOLDataUtils
 
-+(void)addAuthorizationHeaderToRequest:(ASIHTTPRequest *)request withContext:(DOLDataContext *)context {
++(void)addAuthorizationHeaderToRequest:(ASIHTTPRequest *)request withContext:(GOVDataContext *)context {
     //Get URL as a string
     NSString *url = [[request url] absoluteString];
     
@@ -24,7 +24,7 @@
     [dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
     [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss'Z'"];
     NSString *UTCDateString = [dateFormatter stringFromDate: [NSDate date]];
-    NSLog(@"%@",UTCDateString);
+    //NSLog(@"%@",UTCDateString);
     [dateFormatter release];
     
     

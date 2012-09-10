@@ -90,6 +90,16 @@
                 }
                 //Append the argument to the querystring we are building
                 [queryString appendFormat:@"$%@=%@",key, [value urlEncoded]];
+            } else if ([key isEqualToString:@"format"] || [key isEqualToString:@"query"] ||[key isEqualToString:@"region"] ||[key isEqualToString:@"locality"] ||[key isEqualToString:@"skipcount"]){
+                //Add to querystring
+            
+                //If its the first argument append ?, otherwise add the & separator
+                if ([queryString length] == 0) {
+                    [queryString appendString:@"?"];
+                } else {
+                    [queryString appendString:@"&"];
+                }
+                [queryString appendFormat:@"%@=%@",key, [value urlEncoded]];
             }
         } else {
             if ([queryString length] == 0) {
@@ -108,6 +118,8 @@
         [url appendString:queryString];
     }
     
+    NSLog(@"%@", url);
+    
     //Create request
     ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:url]];
     [request setDelegate:self];
@@ -116,9 +128,9 @@
     if ([self.context.APIHost isEqualToString:@"http://api.dol.gov"]) {
         //Add authorization header to the request
         [DOLDataUtils addAuthorizationHeaderToRequest:request withContext:self.context];
+    } else {
     }
     
-    NSLog(@"%@", url);
         
     //Perform the request
     [request setTimeOutSeconds:timeOut];
@@ -146,7 +158,9 @@
         NSError *error = nil;
         NSDictionary *xmlDictionaryResults = [[XMLReader dictionaryForXMLString:[request responseString] error:&error] retain];
         [self.delegate govDataRequest:self didCompleteWithDictionaryResults:xmlDictionaryResults];
+        NSLog(@"The response was in XML");
     } else {
+        NSLog(@"The response was in JSON");
         jsonString = [request responseString];
     }
     
@@ -177,9 +191,9 @@
         
         [self.delegate govDataRequest:self didCompleteWithError:errorMessage];
     } else if ([[[request responseString] substringToIndex:1] isEqualToString:@"{"]){
-        //Use JSON parser to convert the string into a dictionary
-        NSDictionary *results = [jsonString JSONValue];  
+       //Use JSON parser to convert the string into a dictionary
         
+        NSDictionary *results = [jsonString JSONValue];  
         
         //Remove the JSON {d} security wrapper
         //If $filter is used, it is in an additional wrapper named results.
@@ -189,15 +203,36 @@
         if ([[results objectForKey:@"d"] isKindOfClass:[NSArray class]]) {
             array = [results objectForKey:@"d"];
         } else if ([[results objectForKey:@"d"] isKindOfClass:[NSDictionary class]]) {
+            NSString *dolResultString = [NSString stringWithFormat:@"%@", [results objectForKey:@"d"]];
+            NSLog(@"left-most character: %@", [dolResultString substringToIndex:1]);
             NSDictionary *resultWrap = [results objectForKey:@"d"];
+            /*
+             array = [resultWrap objectForKey:@"results"];
+             if (!array) {
+             array = [resultWrap objectForKey:@"getJobsListing"];
+             }*/
             array = [resultWrap objectForKey:@"results"];
+            if (!array) {
+                /*
+                 This section is in need of help.  For some reason, the XML will not parse (nsxmlparsererrordomain error 5)
+                 */
+                dolResultString = [resultWrap objectForKey:@"getJobsListing"];
+                                 NSLog(@"%@", dolResultString);
+                    NSError *error = nil;
+                    NSDictionary *xmlDictionaryResults = [[XMLReader dictionaryForXMLString:dolResultString error:&error] retain];
+                    NSLog(@"%@", xmlDictionaryResults);
+                    NSLog(@"%@", error);
+                    [self.delegate govDataRequest:self didCompleteWithDictionaryResults:xmlDictionaryResults];
+            }
         } else {
             // return results to delegate callback with the dictionary
+            NSLog(@"The response was in a dictionary");
             [self.delegate govDataRequest:self didCompleteWithDictionaryResults:results];
         }
-        if (!array) {
+        if (array) {
             //Return results to delegate (callback)
             [self.delegate govDataRequest:self didCompleteWithResults:array];
+            NSLog(@"The response was in an array");
 
         }
         
