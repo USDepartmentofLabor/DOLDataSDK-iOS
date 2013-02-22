@@ -51,8 +51,10 @@
 
 //Returns results to delegate
 -(void)govDataRequest:(GOVDataRequest *)request didCompleteWithResults:(NSArray *)resultsArray;
-//Returns unmassageged dictionary results to delegate
+//Returns unmassaged dictionary results to delegate
 -(void)govDataRequest:(GOVDataRequest *)request didCompleteWithDictionaryResults:(NSDictionary *)resultsDictionary;
+//Returns unmassaged string results to delegate (all else fails to parse)
+-(void)govDataRequest:(GOVDataRequest *)request didCompleteWithUnParsedResults:(NSString *)resultsString;
 //Returns error to delegate
 -(void)govDataRequest:(GOVDataRequest *)request didCompleteWithError:(NSString *)error;
 

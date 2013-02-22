@@ -101,6 +101,18 @@
                 }
                 [queryString appendFormat:@"%@=%@",key, [value urlEncoded]];
             }
+        } else if ([self.context.APIHost isEqualToString:@"http://api.census.gov"]){
+            /*
+             CENSUS.GOV API
+             */
+            
+            // if it's the first argument, add the API key and the first argument
+            if ([queryString length] == 0) {
+                [queryString appendFormat:@"?key=%@&%@=%@", self.context.APIKey, key, [value urlEncoded]];
+            } else {
+                //add subsequent arguments
+                [queryString appendFormat:@"&%@=%@",key, [value urlEncoded]];
+            }
         } else {
             if ([queryString length] == 0) {
                 [queryString appendString:@"?"];
@@ -129,6 +141,7 @@
         //Add authorization header to the request
         [DOLDataUtils addAuthorizationHeaderToRequest:request withContext:self.context];
     } else {
+        // Do nothing at this time
     }
     
         
@@ -234,8 +247,16 @@
             [self.delegate govDataRequest:self didCompleteWithResults:array];
             NSLog(@"The response was in an array");
 
+        } else {
+            //This is the catch-all bucket for anything that couldn't be parsed.  For example, as of this writing, the census response can't be parsed as JSON.  Returns a string.
+            [self.delegate govDataRequest:self didCompleteWithUnParsedResults:[request responseString]];
         }
         
+        //Remove request from active request tracking list
+        [activeRequests removeObject:request];
+    } else {
+        //This is the catch-all bucket for anything that couldn't be parsed.  For example, as of this writing, the census response can't be parsed as JSON.  Returns a string.
+        [self.delegate govDataRequest:self didCompleteWithUnParsedResults:[request responseString]];
         //Remove request from active request tracking list
         [activeRequests removeObject:request];
     }
