@@ -114,6 +114,9 @@
                 [queryString appendFormat:@"&%@=%@",key, [value urlEncoded]];
             }
         } else {
+            /*
+             All other APIs
+             */
             if ([queryString length] == 0) {
                 [queryString appendString:@"?"];
             } else {
@@ -128,6 +131,16 @@
     //If there are arguments append them to the URL
     if ([queryString length] > 0) {
         [url appendString:queryString];
+    }
+    
+    //The DOT FMCSA requires that the key be placed at the end.
+    if ([self.context.APIHost isEqualToString:@"https://mobile.fmcsa.dot.gov"]) {
+        if ([queryString length] > 0) {
+            [url appendFormat:@"&webKey=%@", self.context.APIKey];
+        } else {
+            [url appendFormat:@"?webKey=%@", self.context.APIKey];
+        }
+        
     }
     
     NSLog(@"%@", url);
