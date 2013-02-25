@@ -1,13 +1,14 @@
-{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf470
+{\rtf1\ansi\ansicpg1252\cocoartf1138\cocoasubrtf510
 {\fonttbl\f0\fnil\fcharset0 Tahoma;\f1\fswiss\fcharset0 Helvetica;\f2\fnil\fcharset0 Consolas;
-}
+\f3\fswiss\fcharset0 ArialMT;}
 {\colortbl;\red255\green255\blue255;\red0\green30\blue136;\red122\green145\blue144;\red245\green245\blue247;
 \red56\green56\blue59;\red0\green77\blue127;\red0\green115\blue109;\red13\green35\blue105;\red255\green0\blue50;
-\red7\green0\blue255;}
+\red38\green38\blue38;}
 {\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}
 {\list\listtemplateid2\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid101\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid2}
-{\list\listtemplateid3\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid201\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid3}}
-{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}{\listoverride\listid3\listoverridecount0\ls3}}
+{\list\listtemplateid3\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid201\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid3}
+{\list\listtemplateid4\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid301\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid4}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}{\listoverride\listid2\listoverridecount0\ls2}{\listoverride\listid3\listoverridecount0\ls3}{\listoverride\listid4\listoverridecount0\ls4}}
 \margl1440\margr1440\vieww13440\viewh20220\viewkind0
 \deftab720
 \pard\pardeftab720\li200\sa100
@@ -182,7 +183,7 @@ dataRequest\cf3 .\cf8 delegate\cf5  \cf3 =\cf5  \cf8 self\cf3 ;\cf5  \
 \
 \pard\tx220\tx720\pardeftab720\li720\fi-720
 \ls3\ilvl0\cf0 {\listtext	\'95	}API_KEY = ""\
-\ls3\ilvl0{\listtext	\'95	}API_SECRET = ""\
+{\listtext	\'95	}API_SECRET = ""\
 {\listtext	\'95	}API_Host = "http://data.fcc.gov"\
 {\listtext	\'95	}API_URL = "/api/block"\
 {\listtext	\'95	}method = "find"
@@ -281,193 +282,23 @@ dataRequest\cf3 .\cf5 delegate \cf3 =\cf5  self\cf3 ;\cf5  \
 \pard\pardeftab720
 
 \f0 \cf0 \cb1 \
+
+\fs26 Let's look at the Census Bureau.  For example, 
+\f3 http://api.census.gov/data/2010/acs5?key=\{your key\}&get=B02001_001E,NAME&for=state:06,36
+\f0 \
+\
+\pard\tx220\tx720\pardeftab720\li720\fi-720
+\ls4\ilvl0\cf0 {\listtext	\'95	}API_KEY = "YOUR_API_KEY"\
+{\listtext	\'95	}API_SECRET = ""\
+{\listtext	\'95	}API_Host = "http://api.census.gov"\
+{\listtext	\'95	}API_URL = "/data/2010"\
+{\listtext	\'95	}method = "acs5"
+\fs32 \
+\pard\pardeftab720
+\cf0 \
 \pard\pardeftab720\li200\sa140
 
 \b\fs34 \cf0 API Method Arguments\
-Standard DOL API datasets\
-\pard\pardeftab720\li200\sa140
-
-\fs32 \cf1 \cb10 top\
-\pard\pardeftab720\li200\sa100
-
-\b0\fs26 \cf0 \cb1 The top argument is used to specify the number of records to be returned.\
-Example:\
 \pard\pardeftab720
 
-\f2\fs22 \cf7 \cb4 NSDictionary\cf5  \cf3 *\cf5 args \cf3 =\cf5  \cf3 [\cf7 NSDictionary\cf5  dictionaryWithObject\cf3 :@\cf9 "2"\cf5  forKey\cf3 :@\cf9 "top"\cf3 ];
-\fs32 \cf0 \
-\pard\pardeftab720
-
-\f0 \cf0 \cb1 \
-\pard\pardeftab720\li200\sa140
-
-\b \cf1 \cb10 skip\
-\pard\pardeftab720\li200\sa100
-
-\b0\fs26 \cf0 \cb1 The skip argument specifies that you want the service to skip a specified number of results. This argument in combination with top, serve as the basis to implement pagination.\
-Example:\
-\pard\pardeftab720
-
-\f2\fs22 \cf3 \cb4 //Return records 21-30\cf5 \
-\pard\pardeftab720
-\cf7 NSDictionary\cf5   \cf3 *\cf5 arguments \cf3 =\cf5  \cf3 [\cf7 NSDictionary\cf5  dictionaryWithObjectsAndKeys\cf3 :@\cf9 "10"\cf3 ,\cf5  \cf3 @\cf9 "top"\cf3 ,\cf5  \cf3 @\cf9 "20"\cf3 ,\cf5  \cf3 @\cf9 "skip"\cf3 ,\cf5  \cf8 nil\cf3 ];
-\fs32 \cf0 \
-\pard\pardeftab720
-
-\f0 \cf0 \cb1 \
-\pard\pardeftab720\li200\sa140
-
-\b \cf1 \cb10 select\
-\pard\pardeftab720\li200\sa100
-
-\b0\fs26 \cf0 \cb1 The select argument allows you to specify the exact columns that you want the API to return. Separate them with commas if there is more than one.\
-In order to save bandwidth, it is always a good idea to add a select clause to most requests and retrieve the columns needed for a specific function. Some datasets can contain dozens of columns and the performance of your app can be impacted if you always return all of the columns. This is even more important in mobile applications because of device memory limitations, possible slow network speeds, and data usage caps imposed by carriers.\
-Example:\
-\pard\pardeftab720
-
-\f2\fs22 \cf3 \cb4 //Select the AgencyId and AgencyFormNumber columns\cf5 \
-\pard\pardeftab720
-\cf7 NSDictionary\cf5  \cf3 *\cf5 args \cf3 =\cf5  \cf3 [\cf7 NSDictionary\cf5  dictionaryWithObject\cf3 :@\cf9 "AgencyId,AgencyFormNumber"\cf5  forKey\cf3 :@\cf9 "select"\cf3 ];
-\fs32 \cf0 \
-\pard\pardeftab720
-
-\f0 \cf0 \cb1 \
-\pard\pardeftab720\li200\sa140
-
-\b \cf1 \cb10 orderby\
-\pard\pardeftab720\li200\sa100
-
-\b0\fs26 \cf0 \cb1 Use the orderby argument to sort the data by one or more columns. Separate them with commas if there is more than one.\
-\pard\pardeftab720
-
-\f2\fs22 \cf3 \cb4 //Order by the AgencyFormNumber column\cf5 \
-\pard\pardeftab720
-\cf7 NSDictionary\cf5  \cf3 *\cf5 args \cf3 =\cf5  \cf3 [\cf7 NSDictionary\cf5  dictionaryWithObject\cf3 :@\cf9 "AgencyFormNumber"\cf5  forKey\cf3 :@\cf9 "orderby"\cf3 ];
-\fs32 \cf0 \
-\pard\pardeftab720
-
-\f0 \cf0 \cb1 \
-\pard\pardeftab720\li200\sa140
-
-\b \cf1 \cb10 filter\
-\pard\pardeftab720\li200\sa100
-
-\b0\fs26 \cf0 \cb1 The filter argument is used to add filters to the API query. For example, you can filter results where a specific column is equal to a string provided.\
-The API recognizes the following comparison keywords:\uc0\u8232 
-\b eq
-\b0  \'96 Equal to\uc0\u8232 
-\b ne
-\b0  \'96 Not Equal to\uc0\u8232 
-\b gt
-\b0  \'96 Greater than\uc0\u8232 
-\b lt
-\b0  \'96 Less than\uc0\u8232 
-\b ge
-\b0  \'96 Greater than or equal to\uc0\u8232 
-\b le
-\b0  \'96 Less than or equal to\
-For string comparisons enclose any multiple word string in single quotes. For example: 
-\b 'Legal Identity Report'
-\b0 \
-More than one filter can be specified by joining them with the 
-\b and
-\b0 /
-\b or
-\b0  keywords. Separate filters with parenthesis.\uc0\u8232 For example: 
-\b (AgencyId eq 'MSHA') and (Title eq 'Legal Identity Report') 
-\b0 retrieves the records where the value in the AgencyId column is equal to 'MSHA' and the value for the Title column is equal to 'Legal Identity Report'.\
-Example:\
-\pard\pardeftab720
-
-\f2\fs22 \cf7 \cb4 NSDictionary\cf5  \cf3 *\cf5 args \cf3 =\cf5  \cf3 [\cf7 NSDictionary\cf5  dictionaryWithObject\cf3 :\cf5  \cf3 :@\cf9 "(AgencyId eq  'MSHA') and (Title eq 'Legal Identity Report')"\cf5  forKey\cf3 :@\cf9 "filter"\cf3 ];
-\fs32 \cf0 \
-\pard\pardeftab720
-
-\f0 \cf0 \cb1 \
-\pard\pardeftab720\li200\sa140
-
-\b\fs34 \cf0 DOL Service Operation for Summer Jobs Plus\
-\pard\pardeftab720\li200\sa100
-
-\b0\fs26 \cf0 To use the Service Operations API the Operation name and parameters need to be supplied using the data services format. Each String typed parameter must be surrounded in quotes in order to work correctly. These quotes are then Url encoded and passed to the Service Operation. Each integer typed parameter must be entered without quotes in order to work correctly.Each parameter that is assigned null should be left blank. \
-\pard\pardeftab720\li200\sa140
-
-\b\fs32 \cf1 \cb10 format\
-\pard\pardeftab720\li200\sa100
-
-\b0\fs26 \cf0 \cb1 The format argument allows you to specify the format that the results string will be returned. If format argument is not passed with request then result will be returned in json format by default. Following are the supported format of results string.\
-Format Codes:\uc0\u8232 json ( Default )\u8232 xml\u8232 atom\
-Example:\
-\pard\pardeftab720
-
-\f2\fs22 \cf3 \cb4 //Create a dictionary of arguments\cf5 \
- \cf7 NSDictionary\cf5  \cf3 *\cf5 arguments \cf3 =\cf5  \cf3 [\cf7 NSDictionary\cf5  dictionaryWithObjectsAndKeys\cf3 :@\cf9 "'json'@"\cf3 ,\cf5  \cf3 @\cf9 "format@"\cf3 ,\cf5  \cf8 nil\cf3 ];
-\fs32 \cf0 \
-\pard\pardeftab720
-
-\f0 \cf0 \cb1 \
-\pard\pardeftab720\li200\sa140
-
-\b \cf1 \cb10 query\
-\pard\pardeftab720\li200\sa100
-
-\b0\fs26 \cf0 \cb1 The query argument will be used to find matching job listings. This is required if region or locality are not provided.\
-Example:\
-\pard\pardeftab720
-
-\f2\fs22 \cf3 \cb4 //Create a dictionary of arguments\cf5 \
-\pard\pardeftab720
-\cf7 NSDictionary\cf5  \cf3 *\cf5 arguments \cf3 =\cf5  \cf3 [\cf7 NSDictionary\cf5  dictionaryWithObjectsAndKeys\cf3 :@\cf9 "'json'@"\cf3 ,\cf5  \cf3 @\cf9 "format@"\cf3 ,\cf5  \cf3 @\cf9 "'farm'"\cf3 ,\cf5  \cf3 @\cf9 "query"\cf3 ,\cf5  \cf8 nil\cf3 ];
-\fs32 \cf0 \
-\pard\pardeftab720
-
-\f0 \cf0 \cb1 \
-\pard\pardeftab720\li200\sa140
-
-\b \cf1 \cb10 region\
-\pard\pardeftab720\li200\sa100
-
-\b0\fs26 \cf0 \cb1 The region argument will be used to filter jobs listings by the state name or abbreviation. This is required if query or locality are not provided.\
-Example:\
-\pard\pardeftab720
-
-\f2\fs22 \cf3 \cb4 //Create a dictionary of arguments\cf5 \
-\pard\pardeftab720
-\cf7 NSDictionary\cf5  \cf3 *\cf5 arguments \cf3 =\cf5  \cf3 [\cf7 NSDictionary\cf5  dictionaryWithObjectsAndKeys\cf3 :@\cf9 "'json'@"\cf3 ,\cf5  \cf3 @\cf9 "format@"\cf3 ,\cf5  \cf3 @\cf9 "'farm'"\cf3 ,\cf5  \cf3 @\cf9 "query"\cf3 ,\cf5  \cf3 @\cf9 ""\cf3 ,\cf5  \cf3 @\cf9 "region"\cf3 ,\cf5  \cf8 nil\cf3 ];
-\fs32 \cf0 \
-\pard\pardeftab720
-
-\f0 \cf0 \cb1 \
-\pard\pardeftab720\li200\sa140
-
-\b \cf1 \cb10 locality\
-\pard\pardeftab720\li200\sa100
-
-\b0\fs26 \cf0 \cb1 The region argument will be used to filter jobs listings by The city name. This is required if query or region are not provided.\
-Example:\
-\pard\pardeftab720
-
-\f2\fs22 \cf3 \cb4 //Create a dictionary of arguments\cf5 \
-\pard\pardeftab720
-\cf7 NSDictionary\cf5  \cf3 *\cf5 arguments \cf3 =\cf5  \cf3 [\cf7 NSDictionary\cf5  dictionaryWithObjectsAndKeys\cf3 :@\cf9 "'json'@"\cf3 ,\cf5  \cf3 @\cf9 "format@"\cf3 ,\cf5  \cf3 @\cf9 "'farm'"\cf3 ,\cf5  \cf3 @\cf9 "query"\cf3 ,\cf5  \cf3 @\cf9 ""\cf3 ,\cf5  \cf3 @\cf9 "region"\cf3 ,@\cf9 ""\cf3 ,\cf5  \cf3 @\cf9 "locality"\cf3 ,\cf5  \cf8 nil\cf3 ];
-\fs32 \cf0 \
-\pard\pardeftab720
-
-\f0 \cf0 \cb1 \
-\pard\pardeftab720\li200\sa140
-
-\b \cf1 \cb10 skipCount\
-\pard\pardeftab720\li200\sa100
-
-\b0\fs26 \cf0 \cb1 The skipCount argument will be used to specify the number of records to skip ahead from the first recor.Valid range of 1-99 and it required.\
-Example:\
-\pard\pardeftab720
-
-\f2\fs22 \cf3 \cb4 //Create a dictionary of arguments\cf5 \
-\pard\pardeftab720
-\cf7 NSDictionary\cf5  \cf3 *\cf5 arguments \cf3 =\cf5  \cf3 [\cf7 NSDictionary\cf5  dictionaryWithObjectsAndKeys\cf3 :@\cf9 "'json'@"\cf3 ,\cf5  \cf3 @\cf9 "format@"\cf3 ,\cf5  \cf3 @\cf9 "'farm'"\cf3 ,\cf5  \cf3 @\cf9 "query"\cf3 ,\cf5  \cf3 @\cf9 ""\cf3 ,\cf5  \cf3 @\cf9 "region"\cf3 ,@\cf9 ""\cf3 ,\cf5  \cf3 @\cf9 "locality"\cf3 ,@\cf9 "1"\cf3 ,\cf5  \cf3 @\cf9 "skipcount"\cf3 ,\cf5  \cf8 nil\cf3 ];
-\fs32 \cf0 \
-\pard\pardeftab720
-
-\f0 \cf0 \cb1 \
-}
+\f1\b0\fs28 \cf10 For API method arguments, please refer to that API's documentation}

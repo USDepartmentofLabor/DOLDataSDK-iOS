@@ -254,7 +254,7 @@
         
         //Remove request from active request tracking list
         [activeRequests removeObject:request];
-    } else {
+    } else if (![[[request responseString] substringToIndex:1] isEqualToString:@"<"]){
         //This is the catch-all bucket for anything that couldn't be parsed.  For example, as of this writing, the census response can't be parsed as JSON.  Returns a string.
         [self.delegate govDataRequest:self didCompleteWithUnParsedResults:[request responseString]];
         //Remove request from active request tracking list
