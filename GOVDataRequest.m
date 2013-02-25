@@ -129,6 +129,18 @@
                 //add subsequent arguments
                 [queryString appendFormat:@"&%@=%@",key, [value urlEncoded]];
             }
+        } else if ([self.context.APIHost isEqualToString:@"http://www.ncdc.noaa.gov"]){
+            /*
+             NOAA National Climatic Data Center
+             */
+            
+            // if it's the first argument, add the API key and the first argument
+            if ([queryString length] == 0) {
+                [queryString appendFormat:@"?%@=%@&token=%@", key, [value urlEncoded], self.context.APIKey];
+            } else {
+                //add subsequent arguments
+                [queryString appendFormat:@"&%@=%@",key, [value urlEncoded]];
+            }
         } else {
             /*
              All other APIs
