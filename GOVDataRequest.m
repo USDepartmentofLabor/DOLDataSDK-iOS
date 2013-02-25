@@ -113,11 +113,13 @@
                 //add subsequent arguments
                 [queryString appendFormat:@"&%@=%@",key, [value urlEncoded]];
             }
-        } else if ([self.context.APIHost isEqualToString:@"http://api.eia.gov"] || [self.context.APIHost isEqualToString:@"http://developer.nrel.gov"]){
+        } else if ([self.context.APIHost isEqualToString:@"http://api.eia.gov"]
+                   || [self.context.APIHost isEqualToString:@"http://developer.nrel.gov"]
+                   || [self.context.APIHost isEqualToString:@"http://api.stlouisfed.org"]){
             /*
              Energy EIA API (beta)
-             and
-             NREL
+             Energy NREL
+             St. Louis Fed
              */
             
             // if it's the first argument, add the API key and the first argument
