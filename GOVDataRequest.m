@@ -113,9 +113,11 @@
                 //add subsequent arguments
                 [queryString appendFormat:@"&%@=%@",key, [value urlEncoded]];
             }
-        } else if ([self.context.APIHost isEqualToString:@"http://api.eia.gov"]){
+        } else if ([self.context.APIHost isEqualToString:@"http://api.eia.gov"] || [self.context.APIHost isEqualToString:@"http://developer.nrel.gov"]){
             /*
              Energy EIA API (beta)
+             and
+             NREL
              */
             
             // if it's the first argument, add the API key and the first argument
