@@ -230,25 +230,17 @@
             array = [results objectForKey:@"d"];
         } else if ([[results objectForKey:@"d"] isKindOfClass:[NSDictionary class]]) {
             NSString *dolResultString = [NSString stringWithFormat:@"%@", [results objectForKey:@"d"]];
-            NSLog(@"left-most character: %@", [dolResultString substringToIndex:1]);
             NSDictionary *resultWrap = [results objectForKey:@"d"];
-            /*
-             array = [resultWrap objectForKey:@"results"];
-             if (!array) {
-             array = [resultWrap objectForKey:@"getJobsListing"];
-             }*/
             array = [resultWrap objectForKey:@"results"];
             if (!array) {
-                /*
-                 This section is in need of help.  For some reason, the XML will not parse (nsxmlparsererrordomain error 5)
-                 */
+                // Parse the XML for SummerJobs+
                 dolResultString = [resultWrap objectForKey:@"getJobsListing"];
-                                 NSLog(@"%@", dolResultString);
-                    NSError *error = nil;
-                    NSDictionary *xmlDictionaryResults = [[XMLReader dictionaryForXMLString:dolResultString error:&error] retain];
-                    NSLog(@"%@", xmlDictionaryResults);
-                    NSLog(@"%@", error);
-                    [self.delegate govDataRequest:self didCompleteWithDictionaryResults:xmlDictionaryResults];
+                NSLog(@"%@", dolResultString);
+                NSError *error = nil;
+                NSDictionary *xmlDictionaryResults = [[XMLReader dictionaryForXMLString:dolResultString error:&error] retain];
+                NSLog(@"%@", xmlDictionaryResults);
+                NSLog(@"%@", error);
+                [self.delegate govDataRequest:self didCompleteWithDictionaryResults:xmlDictionaryResults];
             }
         } else {
             // return results to delegate callback with the dictionary
@@ -259,8 +251,8 @@
             //Return results to delegate (callback)
             [self.delegate govDataRequest:self didCompleteWithResults:array];
             NSLog(@"The response was in an array");
-
-        } else {
+            
+        } else if (![results isKindOfClass:[NSDictionary class]]){
             //This is the catch-all bucket for anything that couldn't be parsed.  For example, as of this writing, the census response can't be parsed as JSON.  Returns a string.
             [self.delegate govDataRequest:self didCompleteWithUnParsedResults:[request responseString]];
         }
