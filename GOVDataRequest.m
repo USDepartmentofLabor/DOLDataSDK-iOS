@@ -113,6 +113,18 @@
                 //add subsequent arguments
                 [queryString appendFormat:@"&%@=%@",key, [value urlEncoded]];
             }
+        } else if ([self.context.APIHost isEqualToString:@"http://api.eia.gov"]){
+            /*
+             Energy EIA API (beta)
+             */
+            
+            // if it's the first argument, add the API key and the first argument
+            if ([queryString length] == 0) {
+                [queryString appendFormat:@"?api_key=%@&%@=%@", self.context.APIKey, key, [value urlEncoded]];
+            } else {
+                //add subsequent arguments
+                [queryString appendFormat:@"&%@=%@",key, [value urlEncoded]];
+            }
         } else {
             /*
              All other APIs
