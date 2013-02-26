@@ -101,9 +101,11 @@
                 }
                 [queryString appendFormat:@"%@=%@",key, [value urlEncoded]];
             }
-        } else if ([self.context.APIHost isEqualToString:@"http://api.census.gov"]){
+        } else if ([self.context.APIHost isEqualToString:@"http://api.census.gov"] ||
+                   [self.context.APIHost isEqualToString:@"http://pillbox.nlm.nih.gov"]){
             /*
              CENSUS.GOV API
+             NIH Pillbox
              */
             
             // if it's the first argument, add the API key and the first argument
