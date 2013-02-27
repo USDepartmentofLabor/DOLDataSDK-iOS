@@ -145,6 +145,18 @@
                 //add subsequent arguments
                 [queryString appendFormat:@"&%@=%@",key, [value urlEncoded]];
             }
+        } else if ([self.context.APIHost isEqualToString:@"https://go.usa.gov"]){
+            /*
+             USA.gov URL Shortener
+             */
+            
+            // if it's the first argument, add the API key and the first argument
+            if ([queryString length] == 0) {
+                [queryString appendFormat:@"?%@=%@&apiKey=%@", key, [value urlEncoded], self.context.APIKey];
+            } else {
+                //add subsequent arguments
+                [queryString appendFormat:@"&%@=%@",key, [value urlEncoded]];
+            }
         } else {
             /*
              All other APIs
