@@ -117,11 +117,13 @@
             }
         } else if ([self.context.APIHost isEqualToString:@"http://api.eia.gov"]
                    || [self.context.APIHost isEqualToString:@"http://developer.nrel.gov"]
-                   || [self.context.APIHost isEqualToString:@"http://api.stlouisfed.org"]){
+                   || [self.context.APIHost isEqualToString:@"http://api.stlouisfed.org"]
+                   || [self.context.APIHost isEqualToString:@"http://healthfinder.gov"]){
             /*
              Energy EIA API (beta)
              Energy NREL
              St. Louis Fed
+             NIH Healthfinder
              */
             
             // if it's the first argument, add the API key and the first argument
