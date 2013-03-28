@@ -2,8 +2,8 @@
 //  DOLAPIUtils.m
 //  EventsAPI
 //
-//  Created by Antonio Nieves on 4/29/11.
-//  Copyright 2011 U.S. Department of Labor. All rights reserved.
+//  Created by the US Department of Labor.
+//  Code available in the public domain
 //
 
 #import "DOLDataUtils.h"
