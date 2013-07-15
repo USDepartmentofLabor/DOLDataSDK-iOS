@@ -196,9 +196,7 @@
     // DOL
     if ([self.context.APIHost isEqualToString:@"http://api.dol.gov"]) {
         //Add authorization header to the request
-        [DOLDataUtils addAuthorizationHeaderToRequest:request withContext:self.context];
-    } else {
-        // Do nothing at this time
+        [request addRequestHeader:@"Accept" value:@"application/json"];
     }
     
         
