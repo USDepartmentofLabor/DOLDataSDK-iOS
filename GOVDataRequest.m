@@ -70,6 +70,23 @@
     NSEnumerator *enumerator = [arguments keyEnumerator];
     id key = nil;
     
+    
+    // Where appropriate, add the key.
+    if ([self.context.APIHost isEqualToString:@"http://api.dol.gov"]) {
+        [queryString appendFormat:@"?KEY=%@", [self.context.APIKey urlEncoded]];
+    } else if ([self.context.APIHost isEqualToString:@"http://api.census.gov"] ||
+               [self.context.APIHost isEqualToString:@"http://pillbox.nlm.nih.gov"]){
+        [queryString appendFormat:@"?key=%@", self.context.APIKey];
+    } else if ([self.context.APIHost isEqualToString:@"http://api.eia.gov"]
+               || [self.context.APIHost isEqualToString:@"http://developer.nrel.gov"]
+               || [self.context.APIHost isEqualToString:@"http://api.stlouisfed.org"]
+               || [self.context.APIHost isEqualToString:@"http://healthfinder.gov"]){
+        [queryString appendFormat:@"?api_key=%@", self.context.APIKey];
+    } else if ([self.context.APIHost isEqualToString:@"http://www.ncdc.noaa.gov"]){
+        [queryString appendFormat:@"?token=%@", self.context.APIKey];
+    } else if ([self.context.APIHost isEqualToString:@"https://go.usa.gov"]){
+        // do nothing for now
+    }
     //Loop through the dictionary
     while ( (key = [enumerator nextObject]) != nil) {
         //Store value
@@ -77,29 +94,18 @@
         
         // Contstruct arguments part of query string for DOL's API
         if ([self.context.APIHost isEqualToString:@"http://api.dol.gov"]) {
+            NSLog(@"Host is DOL!");
             //Build argument querystring. Process only valid arguments and ignore the rest
             if ([key isEqualToString:@"top"] || [key isEqualToString:@"skip"] || [key isEqualToString:@"select"]
                 || [key isEqualToString:@"orderby"] || [key isEqualToString:@"filter"]) {
                 //Add to querystring
                 
-                //If its the first argument append ?, otherwise add the & separator
-                if ([queryString length] == 0) {
-                    [queryString appendString:@"?"];
-                } else {
-                    [queryString appendString:@"&"];
-                }
                 //Append the argument to the querystring we are building
-                [queryString appendFormat:@"$%@=%@",key, [value urlEncoded]];
+                [queryString appendFormat:@"&$%@=%@",key, [value urlEncoded]];
             } else if ([key isEqualToString:@"format"] || [key isEqualToString:@"query"] ||[key isEqualToString:@"region"] ||[key isEqualToString:@"locality"] ||[key isEqualToString:@"skipcount"]){
                 //Add to querystring
-            
-                //If its the first argument append ?, otherwise add the & separator
-                if ([queryString length] == 0) {
-                    [queryString appendString:@"?"];
-                } else {
-                    [queryString appendString:@"&"];
-                }
-                [queryString appendFormat:@"%@=%@",key, [value urlEncoded]];
+                
+                [queryString appendFormat:@"&%@=%@",key, [value urlEncoded]];
             }
         } else if ([self.context.APIHost isEqualToString:@"http://api.census.gov"] ||
                    [self.context.APIHost isEqualToString:@"http://pillbox.nlm.nih.gov"]){
@@ -108,13 +114,8 @@
              NIH Pillbox
              */
             
-            // if it's the first argument, add the API key and the first argument
-            if ([queryString length] == 0) {
-                [queryString appendFormat:@"?key=%@&%@=%@", self.context.APIKey, key, [value urlEncoded]];
-            } else {
-                //add subsequent arguments
-                [queryString appendFormat:@"&%@=%@",key, [value urlEncoded]];
-            }
+            //add subsequent arguments
+            [queryString appendFormat:@"&%@=%@",key, [value urlEncoded]];
         } else if ([self.context.APIHost isEqualToString:@"http://api.eia.gov"]
                    || [self.context.APIHost isEqualToString:@"http://developer.nrel.gov"]
                    || [self.context.APIHost isEqualToString:@"http://api.stlouisfed.org"]
@@ -127,24 +128,16 @@
              */
             
             // if it's the first argument, add the API key and the first argument
-            if ([queryString length] == 0) {
-                [queryString appendFormat:@"?api_key=%@&%@=%@", self.context.APIKey, key, [value urlEncoded]];
-            } else {
-                //add subsequent arguments
-                [queryString appendFormat:@"&%@=%@",key, [value urlEncoded]];
-            }
+            //add subsequent arguments
+            [queryString appendFormat:@"&%@=%@",key, [value urlEncoded]];
         } else if ([self.context.APIHost isEqualToString:@"http://www.ncdc.noaa.gov"]){
             /*
              NOAA National Climatic Data Center
              */
             
             // if it's the first argument, add the API key and the first argument
-            if ([queryString length] == 0) {
-                [queryString appendFormat:@"?%@=%@&token=%@", key, [value urlEncoded], self.context.APIKey];
-            } else {
-                //add subsequent arguments
-                [queryString appendFormat:@"&%@=%@",key, [value urlEncoded]];
-            }
+            //add subsequent arguments
+            [queryString appendFormat:@"&%@=%@",key, [value urlEncoded]];
         } else if ([self.context.APIHost isEqualToString:@"https://go.usa.gov"]){
             /*
              USA.gov URL Shortener
@@ -161,6 +154,7 @@
             /*
              All other APIs
              */
+            NSLog(@"all others");
             if ([queryString length] == 0) {
                 [queryString appendString:@"?"];
             } else {
@@ -187,7 +181,6 @@
         
     }
     
-    NSLog(@"%@", url);
     
     //Create request
     ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:url]];
@@ -195,7 +188,7 @@
     
     // DOL
     if ([self.context.APIHost isEqualToString:@"http://api.dol.gov"]) {
-        //Add authorization header to the request
+        //Add request header to the request
         [request addRequestHeader:@"Accept" value:@"application/json"];
     }
     
