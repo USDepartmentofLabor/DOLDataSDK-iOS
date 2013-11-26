@@ -7,14 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ASIHTTPRequest.h"
+//#import "ASIHTTPRequest.h"
 #import "GOVDataContext.h"
 
 //Declare delegate for callback. Full declaration below interface.
 @protocol GOVDataRequestDelegate;
 
-@interface GOVDataRequest : NSObject<ASIHTTPRequestDelegate> {
-    id<GOVDataRequestDelegate>delegate;
+@interface GOVDataRequest : NSObject {
+   __weak id<GOVDataRequestDelegate>delegate;
     
     //We need to keep track of the requests
     //we need to cancel them before dealloc or app will crash when the results return.
@@ -29,7 +29,7 @@
 @property(nonatomic,retain)GOVDataContext *context;
 
 //Delegate for callback methods
-@property(nonatomic,assign)id<GOVDataRequestDelegate>delegate;
+@property(nonatomic,weak)id<GOVDataRequestDelegate>delegate;
 
 
 //The main method of the GOVData SDK.
@@ -50,11 +50,11 @@
 @protocol GOVDataRequestDelegate <NSObject>
 
 //Returns results to delegate
--(void)govDataRequest:(GOVDataRequest *)request didCompleteWithResults:(NSArray *)resultsArray;
+-(void)govDataRequest:(GOVDataRequest *)request didCompleteWithResults:(NSArray *)resultsArray andResponseTime:(float)timeInMS;
 //Returns unmassaged dictionary results to delegate
--(void)govDataRequest:(GOVDataRequest *)request didCompleteWithDictionaryResults:(NSDictionary *)resultsDictionary;
+-(void)govDataRequest:(GOVDataRequest *)request didCompleteWithDictionaryResults:(NSDictionary *)resultsDictionary andResponseTime:(float)timeInMS;
 //Returns unmassaged string results to delegate (all else fails to parse)
--(void)govDataRequest:(GOVDataRequest *)request didCompleteWithUnParsedResults:(NSString *)resultsString;
+-(void)govDataRequest:(GOVDataRequest *)request didCompleteWithUnParsedResults:(NSString *)resultsString andResponseTime:(float)timeInMS;
 //Returns error to delegate
 -(void)govDataRequest:(GOVDataRequest *)request didCompleteWithError:(NSString *)error;
 

@@ -7,14 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "ASIHTTPRequest.h"
+//#import "ASIHTTPRequest.h"
 #import "GOVDataContext.h"
 
 @interface DOLDataUtils : NSObject {
     
 }
 
-+(void)addAuthorizationHeaderToRequest:(ASIHTTPRequest *)request withContext:(GOVDataContext *)context;
+//+(void)addAuthorizationHeaderToRequest:(ASIHTTPRequest *)request withContext:(GOVDataContext *)context;
 
 @end
 

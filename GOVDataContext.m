@@ -30,11 +30,11 @@
 }
 
 -(void)dealloc {
-    [_APIKey release];
+ /*   [_APIKey release];
     [_APIURL release];
     [_APIHost release];
     [_SharedSecret release];
-    [super dealloc];
+    [super dealloc]; */
 }
 
 @end

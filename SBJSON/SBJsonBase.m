@@ -44,8 +44,8 @@ NSString * SBJSONErrorDomain = @"org.brautaset.JSON.ErrorDomain";
 }
 
 - (void)dealloc {
-    [errorTrace release];
-    [super dealloc];
+   // [errorTrace release];
+   // [super dealloc];
 }
 
 - (void)addErrorWithCode:(NSUInteger)code description:(NSString*)str {
@@ -70,7 +70,7 @@ NSString * SBJSONErrorDomain = @"org.brautaset.JSON.ErrorDomain";
 
 - (void)clearErrorTrace {
     [self willChangeValueForKey:@"errorTrace"];
-    [errorTrace release];
+   // [errorTrace release];
     errorTrace = nil;
     [self didChangeValueForKey:@"errorTrace"];
 }

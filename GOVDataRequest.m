@@ -8,7 +8,8 @@
 
 #import "GOVDataRequest.h"
 #import "DOLDataUtils.h"
-#import "ASIHTTPRequest.h"
+//#import "ASIHTTPRequest.h"
+#import "MCCURLConnection.h"
 #import "JSON.h"
 #import "XMLReader.h"
 
@@ -94,7 +95,7 @@
         
         // Contstruct arguments part of query string for DOL's API
         if ([self.context.APIHost isEqualToString:@"http://api.dol.gov"]) {
-            NSLog(@"Host is DOL!");
+      //      NSLog(@"Host is DOL!");
             //Build argument querystring. Process only valid arguments and ignore the rest
             if ([key isEqualToString:@"top"] || [key isEqualToString:@"skip"] || [key isEqualToString:@"select"]
                 || [key isEqualToString:@"orderby"] || [key isEqualToString:@"filter"]) {
@@ -154,7 +155,7 @@
             /*
              All other APIs
              */
-            NSLog(@"all others");
+      //      NSLog(@"all others");
             if ([queryString length] == 0) {
                 [queryString appendString:@"?"];
             } else {
@@ -180,137 +181,138 @@
         }
         
     }
+    /*
+     
+     
+     
+     
+     look right below!
     
-    
+     
+     
+     
+     */
     //Create request
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:url]];
-    [request setDelegate:self];
+//    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:[NSURL URLWithString:url]];
+  //  [request setDelegate:self];
+ //   NSLog(@"URL is %@", url);
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+    
     
     // DOL
     if ([self.context.APIHost isEqualToString:@"http://api.dol.gov"]) {
         //Add request header to the request
-        [request addRequestHeader:@"Accept" value:@"application/json"];
+//        [request addRequestHeader:@"Accept" value:@"application/json"];
+        // Create a mutable copy of the immutable request and add more headers
+        NSMutableURLRequest *mutableRequest = [request mutableCopy];
+        [mutableRequest addValue:@"application/json" forHTTPHeaderField:@"Accept"];
+    
+        // Now set our request variable with an (immutable) copy of the altered request
+        request = [mutableRequest copy];
+    
+        // Log the output to make sure our new headers are there
+    //    NSLog(@"%@", request.allHTTPHeaderFields);
     }
     
-        
+    //Get current date/time
+    NSTimeInterval then = [[NSDate date] timeIntervalSinceReferenceDate];
     //Perform the request
-    [request setTimeOutSeconds:timeOut];
-    [request startAsynchronous];
+ 
+    
+    [MCCURLConnection connectionWithRequest:request onFinished:^(MCCURLConnection *connection) {
+        if (connection.error || (connection.httpStatusCode < 200) || (connection.httpStatusCode >= 400)) {
+          //  NSLog(@"Error: %@ (status code: %ld)", connection.error, (long)connection.httpStatusCode);
+            [self.delegate govDataRequest:self didCompleteWithError:[NSString stringWithFormat:@"Error: %@ (status code: %ld)", connection.error, (long)connection.httpStatusCode]];
+            return;
+        }
+        
+        NSTimeInterval now = [[NSDate date] timeIntervalSinceReferenceDate];
+        
+        double elapsedTime = now - then;
+        
+        
+//        NSLog(@"Time to complete: %d", connection.response)
+     //   NSURLResponse* thisResponse = connection.response;
+     //   NSDictionary* headers = [(NSHTTPURLResponse *)thisResponse allHeaderFields];
+     //   NSLog(@"HEADERS: %@", headers);
+     //   NSLog(@"Received data length: %lu Bytes", (unsigned long)connection.data.length);
 
+        //Read response to a string.  Still called "jsonString" for convenience
+        NSString *jsonString;
+        NSString *responseString = [[NSString alloc] initWithData:connection.data encoding:NSUTF8StringEncoding];
+        
+        //First, check to see if it's XML
+        if ([[responseString substringToIndex:1] isEqualToString:@"<"]) {
+            //If XML, then parse into an NSDictionary and call the appropriate call-back method.
+            NSError *error = nil;
+            NSDictionary *xmlDictionaryResults = [XMLReader dictionaryForXMLString:responseString error:&error];
+            [self.delegate govDataRequest:self didCompleteWithDictionaryResults:xmlDictionaryResults andResponseTime:elapsedTime];
+     //       NSLog(@"The response was in XML");
+        } else {
+     //       NSLog(@"The response was in JSON");
+            jsonString = responseString;
+        }
+        if ([[responseString substringToIndex:1] isEqualToString:@"{"]){
+            //Use JSON parser to convert the string into a dictionary
+            
+            NSDictionary *results = [jsonString JSONValue];
+            
+            //Remove the JSON {d} security wrapper
+            //If $filter is used, it is in an additional wrapper named results.
+            NSArray *array = nil;
+            
+            //"Result" wrapper test and unwrap -- used for simple datasets
+            if ([[results objectForKey:@"d"] isKindOfClass:[NSArray class]]) {
+                array = [results objectForKey:@"d"];
+            } else if ([[results objectForKey:@"d"] isKindOfClass:[NSDictionary class]]) {
+                NSString *dolResultString = [NSString stringWithFormat:@"%@", [results objectForKey:@"d"]];
+                NSDictionary *resultWrap = [results objectForKey:@"d"];
+                array = [resultWrap objectForKey:@"results"];
+                if (!array) {
+                    // Parse the XML for SummerJobs+
+                    dolResultString = [resultWrap objectForKey:@"getJobsListing"];
+                //    NSLog(@"%@", dolResultString);
+                    NSError *error = nil;
+                    NSDictionary *xmlDictionaryResults = [XMLReader dictionaryForXMLString:dolResultString error:&error];
+                 //   NSLog(@"%@", xmlDictionaryResults);
+                 //   NSLog(@"%@", error);
+                    [self.delegate govDataRequest:self didCompleteWithDictionaryResults:xmlDictionaryResults andResponseTime:elapsedTime];
+                }
+            } else {
+                // return results to delegate callback with the dictionary
+           //     NSLog(@"The response was in a dictionary");
+                [self.delegate govDataRequest:self didCompleteWithDictionaryResults:results andResponseTime:elapsedTime];
+            }
+            if (array) {
+                //Return results to delegate (callback)
+                [self.delegate govDataRequest:self didCompleteWithResults:array andResponseTime:elapsedTime];
+         //       NSLog(@"The response was in an array");
+                
+            } else if (![results isKindOfClass:[NSDictionary class]]){
+                //This is the catch-all bucket for anything that couldn't be parsed.  For example, as of this writing, the census response can't be parsed as JSON.  Returns a string.
+                [self.delegate govDataRequest:self didCompleteWithUnParsedResults:responseString andResponseTime:elapsedTime];
+            }
+            
+            //Remove request from active request tracking list
+            [activeRequests removeObject:request];
+        } else if (![[responseString substringToIndex:1] isEqualToString:@"<"]){
+            //This is the catch-all bucket for anything that couldn't be parsed.  For example, as of this writing, the census response can't be parsed as JSON.  Returns a string.
+            [self.delegate govDataRequest:self didCompleteWithUnParsedResults:responseString andResponseTime:elapsedTime];
+            //Remove request from active request tracking list
+            [activeRequests removeObject:request];
+        }
+        //[self.delegate govDataRequest:self didCompleteWithUnParsedResults:[[[NSString alloc] initWithData:connection.data encoding:NSUTF8StringEncoding] autorelease]];
+
+    }];
+    request = nil;
 }
 
 
 #pragma mark ASIHTTP methods
-//ASIHTTP invokes this method when it finishes processing a request with success
-//Here is where we process the results which arrive in JSON format
-//We use the JSON parser to convert to a NSDictionary and return the results to the delegate (callback)
--(void)requestFinished:(ASIHTTPRequest *)request
-{
-    //Log details for dubugging purposes
-	NSLog(@"Webmethod returned %llu bytes", [request contentLength]);
-	//NSLog(@"%@", [request responseString]);
-    
-    //Read response to a string.  Still called "jsonString" for convenience
-    NSString *jsonString;
-    
-    //First, check to see if it's XML
-    if ([[[request responseString] substringToIndex:1] isEqualToString:@"<"]) {
-        //If XML, then parse into an NSDictionary and call the appropriate call-back method.
-        NSError *error = nil;
-        NSDictionary *xmlDictionaryResults = [[XMLReader dictionaryForXMLString:[request responseString] error:&error] retain];
-        [self.delegate govDataRequest:self didCompleteWithDictionaryResults:xmlDictionaryResults];
-        NSLog(@"The response was in XML");
-    } else {
-        NSLog(@"The response was in JSON");
-        jsonString = [request responseString];
-    }
-    
-    //NSLog(@"RESPONSE (%d) = \n%@", [request responseStatusCode], jsonString);
-    
-    int responseCode = [request responseStatusCode];
-    
-    NSString *errorMessage;
-    
-    //Response was not HTTP_OK? Lets send error to delegate
-    //TODO: Better error reporting
-    if (responseCode != 200) {
-        
-        switch (responseCode) {
-            case 401:
-                errorMessage = @"Unauthorized";
-                break;
-            case 400:
-                errorMessage = @"Bad Request";
-                break;
-            case 404:
-                errorMessage = @"Resource not found";
-                break;
-            default:
-                errorMessage = [NSString stringWithFormat:@"Error %d returned", responseCode];
-                break;
-        }
-        
-        [self.delegate govDataRequest:self didCompleteWithError:errorMessage];
-    } else if ([[[request responseString] substringToIndex:1] isEqualToString:@"{"]){
-       //Use JSON parser to convert the string into a dictionary
-        
-        NSDictionary *results = [jsonString JSONValue];  
-        
-        //Remove the JSON {d} security wrapper
-        //If $filter is used, it is in an additional wrapper named results.
-        NSArray *array = nil;
-        
-        //"Result" wrapper test and unwrap -- used for simple datasets
-        if ([[results objectForKey:@"d"] isKindOfClass:[NSArray class]]) {
-            array = [results objectForKey:@"d"];
-        } else if ([[results objectForKey:@"d"] isKindOfClass:[NSDictionary class]]) {
-            NSString *dolResultString = [NSString stringWithFormat:@"%@", [results objectForKey:@"d"]];
-            NSDictionary *resultWrap = [results objectForKey:@"d"];
-            array = [resultWrap objectForKey:@"results"];
-            if (!array) {
-                // Parse the XML for SummerJobs+
-                dolResultString = [resultWrap objectForKey:@"getJobsListing"];
-                NSLog(@"%@", dolResultString);
-                NSError *error = nil;
-                NSDictionary *xmlDictionaryResults = [[XMLReader dictionaryForXMLString:dolResultString error:&error] retain];
-                NSLog(@"%@", xmlDictionaryResults);
-                NSLog(@"%@", error);
-                [self.delegate govDataRequest:self didCompleteWithDictionaryResults:xmlDictionaryResults];
-            }
-        } else {
-            // return results to delegate callback with the dictionary
-            NSLog(@"The response was in a dictionary");
-            [self.delegate govDataRequest:self didCompleteWithDictionaryResults:results];
-        }
-        if (array) {
-            //Return results to delegate (callback)
-            [self.delegate govDataRequest:self didCompleteWithResults:array];
-            NSLog(@"The response was in an array");
-            
-        } else if (![results isKindOfClass:[NSDictionary class]]){
-            //This is the catch-all bucket for anything that couldn't be parsed.  For example, as of this writing, the census response can't be parsed as JSON.  Returns a string.
-            [self.delegate govDataRequest:self didCompleteWithUnParsedResults:[request responseString]];
-        }
-        
-        //Remove request from active request tracking list
-        [activeRequests removeObject:request];
-    } else if (![[[request responseString] substringToIndex:1] isEqualToString:@"<"]){
-        //This is the catch-all bucket for anything that couldn't be parsed.  For example, as of this writing, the census response can't be parsed as JSON.  Returns a string.
-        [self.delegate govDataRequest:self didCompleteWithUnParsedResults:[request responseString]];
-        //Remove request from active request tracking list
-        [activeRequests removeObject:request];
-    }
-}
-
--(void)requestFailed:(ASIHTTPRequest *)request
-{
-    [activeRequests removeObject:request];
-	[self.delegate govDataRequest:self didCompleteWithError:[[request error]localizedDescription]];
-}
-
 //Cancel all pending requests before destroying the object
 //or else the app will crash
 -(void)dealloc {
+/*
     //Cancel all requests being tracked
     for (ASIHTTPRequest *request in activeRequests) { 
         request.delegate = nil;
@@ -320,8 +322,8 @@
     //release objects
     if (activeRequests != nil)
         [activeRequests release];
-    
-    [super dealloc];
+*/
+   // [super dealloc];
 }
 
 @end
