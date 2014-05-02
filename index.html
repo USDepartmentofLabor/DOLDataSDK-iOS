@@ -1,0 +1,519 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML> 
+<HEAD> 
+<TITLE>U.S. Department of Labor -- The Department of Labor Developer Community</TITLE>
+<META NAME="keywords" CONTENT="Department of Labor, DOL, Secretary of Labor" />
+<!-- begin dol-styles.shtm -->
+<link rel="shortcut icon" href="http://www.dol.gov/favicon.ico" type="image/x-icon">
+<link rel="icon" href="http://www.dol.gov/favicon.ico" type="image/x-icon">
+<link href="http://www.dol.gov/dol.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="api.css" TYPE="text/css" />
+<link href="http://webapps.dol.gov/FSPublic/Content/W_Helpful.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+<!--
+caption {text-align:left; font-size:80%}
+table{margin-left:12px;}
+
+
+-->
+</style>
+
+<!-- end dol-styles.shtm -->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<script type="text/javascript" src="prettify.js"></script>
+<script language="JavaScript" type="text/javascript">
+
+	jQuery(document).ready(function(){
+
+		// This line of code makes code pretty to look at and understand.
+		window.prettyPrint && prettyPrint()
+	
+	});
+	
+
+
+</script>
+<!--start include header-dest-redesign3.shtm -->
+<script src="http://webapps.dol.gov/FSPublic/Scripts/W_Helpful.js" type="text/javascript"></script>
+<script type="text/javascript">
+		$(document).ready(function() {
+			W_Helpful.init('#fbcontent');
+		});
+</script> 
+</HEAD> 
+<BODY> 
+<a href="https://github.com/USDepartmentofLabor/DOLDataSDK-iOS"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+<div id="Main">
+	<!--Header Start -->
+    <a href="#pagecontent" class="skipster">Skip to page content</a>
+
+<div id="Header">
+    <div id="Banner">
+        <p class="banner"><a href="http://www.dol.gov">United States Department of Labor</a></p>
+    </div>
+		<div id="RightColumn"><table><tr><td valign="bottom">
+		
+			</td><td>
+            
+  
+ 
+ 
+ 
+            
+            
+          </td></tr>
+		  <tr><td colspan="2">
+			
+
+			</td></tr></table>
+		</div>
+	</div>
+    
+	<!--Header End -->
+
+	<!--Body Start -->
+	<div id="Body">
+		<div id="UtilityBar" class="tools">
+			<div class="utilitybarleft"><div id="agencyname">&nbsp;</div></div>
+
+			<!-- This is where the E-mail This page use to be -->
+			<div class="utilitybarright">
+				<div id="fbcontent" style="float:right"></div>			
+			</div>
+		</div>
+		<div class="crumb-links"><!-- begin crumb-nonav-auto.shtm -->
+<TABLE BORDER="0" CELLSPACING="0" CELLPADDING="0">
+  <TR>
+    <TD VALIGN="middle" ALIGN="LEFT" height="7" style="padding-left:2px"><span class="crumb-links">
+      <a href="http://www.dol.gov">DOL Home</a> &gt; <a href="http://www.dol.gov/open/">OPEN</a> &gt; <a href="http://developer.dol.gov">Developer Community</a> &gt; iOS Federal Data SDK 
+      </span> </td>
+
+  </tr>
+</table>
+<!-- end crumb-nonav-auto.shtm --></div>
+		<div id="content" >
+			<div id="pagecontent" style="width:768px;font-size:0;line-height:0;"></div>
+
+<!--end include header-dest-redesign3.shtm -->
+<!-- START CONTENT HERE  *************************************************** -->
+                <h1 class="title" id="page-title">iOS Federal Data SDK</h1>
+
+<h2>Adding the SDK to Your Project</h2>
+<h3><a name="add" id="add"></a>Add SDK files to your project</h3>
+<p><a href="http://developer.dol.gov/sites/default/files/DOLDataSDK-iOS.zip">Extract the zipped SDK folder</a> or grab the <a href="https://github.com/USDepartmentofLabor/DOLDataSDK-iOS">Git repository</a>.<br />
+Copy the GOVDataSDK folder to your Xcode project.</p>
+<h3><a name="frame" id="frame">Add Required Frameworks</a></h3>
+<p><a name="frame" id="frame"> </a></p>
+<p><a name="frame" id="frame">Select your project and then select the project target in the middle pane. From the right pane select Build Phases. Expand the "Link Binary With Libraries" section. Add the required frameworks:</a></p>
+<ul><li><a name="frame" id="frame">libz.dylib</a></li>
+<li><a name="frame" id="frame">MobileCoreServices.framework</a></li>
+<li><a name="frame" id="frame">CFNetwork.framework</a></li>
+<li><a name="frame" id="frame">SystemConfiguration.framework</a></li>
+</ul><p><a name="frame" id="frame">Frameworks<br /><img alt="screenshot of frameworks to add" height="190" src="/images/opa.developer.sdk.ios.api-sample.jpg" width="400" /></a></p>
+<h2><a name="frame" id="frame">Using the SDK</a></h2>
+<h3><a name="frame" id="frame"></a><a name="ref" id="ref"></a>Reference the DOL Data API in your source file</h3>
+<p>In the source files that will make DOL Data requests add the following imports:</p>
+<pre class="prettyprint" style="width:400px">
+#import "GOVDataRequest.h"
+#import "GOVDataContext.h"</pre><h3><a name="class" id="class"></a>Prepare your class for delegate callbacks</h3>
+<p>The GOV Data SDK processes requests asynchronously to prevent locking up the UI while the data is requested and processed. To achieve this the SDK makes use of delegate methods. To successfully retrieve data it is required to implement the two <strong>GOVDataRequestDelegate </strong>methods and set your class as the delegate for the request. The methods will be invoked when the results have been processed or when an error occurs.</p>
+<p>1. Implement the <strong>GOVDataRequestDelegate </strong>protocol<strong> </strong>to the class that will receive and process the API responses</p>
+<p>Example:</p>
+<pre class="prettyprint">
+@interface RootViewController : UITableViewController&lt;GOVDataRequestDelegate&gt;</pre><p>2. Add the delegate methods to your class</p>
+<pre class="prettyprint">
+//Results  delegate
+-(void)govDataRequest:(GOVDataRequest *)request didCompleteWithResults:(NSArray *)resultsArray andResponseTime:(float)timeInMS {
+     //for Standard DOL API datasets
+	           //Add your code here
+	           //resultsArray is an array of NSDictionaries
+	           //One NSDictionary per table row 
+    //for Standard DOL Data service - Summer job Plus,
+	           //Add your code here
+	           //resultsArray is an array of NSDictionaries
+	           //Get the value of first key from NSDictionary in form of NSDictionaries.
+		   //From NSDictionaries , look for "getJobsListing" which return the NSDictionary object.
+		   //From getJobsListing object which is type of NSDictionaries , object using key "items" , result is an array , each element in array is job result.
+			
+}
+ 
+-(void)govDataRequest:(GOVDataRequest *)request didCompleteWithDictionaryResults:(NSDictionary *)resultsDictionary andResponseTime:(float)timeInMS {
+    
+    // for web services that are not processed by the SDK as an array. For example, the FCC's Public Inspection Files API
+    // consult the API's documentation regarding data structure or use NSLog to inspect the data
+}
+ 
+ 
+//Error delegate  
+-(void)govDataRequest:(GOVDataRequest *)request didCompleteWithError:(NSString *)error {
+	//Add your code here to show  / handle error
+}
+ 
+// Catch-all delegate
+-(void)govDataRequest:(GOVDataRequest *)request didCompleteWithUnParsedResults:(NSString *)resultsString andResponseTime:(float)timeInMS {
+ 
+    // Delegate to catch any data that could not be parsed
+    
+}</pre><h3><a name="api" id="api"></a>Making API Calls</h3>
+<p>The <strong>GOVDataRequest</strong> class is used to make API calls. It requires a context object to be passed to its constructor in order to get the API key and URL information needed for the requests. The <strong>GOVDataContext</strong> is the context class used to hold this information.</p>
+<p>You can also pass arguments to the API call by adding them to a NSDictionary as key/value pairs and passing it as the second parameter of the <strong>callAPIMethod</strong> method. Valid arguments are defined later in this document</p>
+<ul><li>Instantiate a <strong>GOVDataContext</strong> object</li>
+<li>Instantiate a <strong>GOVDataRequest</strong> object and pass the context</li>
+<li>Set your class as the delegate for the <strong>GOVDataRequest</strong></li>
+<li>Create a <strong>NSDictionary</strong> and store all the API arguments as key/value pairs.</li>
+<li>Call the <strong>callAPIMethod</strong> method, passing the API name and the arguments (or null if there are no arguments)</li>
+</ul><p><u>Sample code to make requests for standard DOL API datasets:</u></p>
+<pre class="prettyprint">
+//API  and URL constants
+#define API_KEY @"YOUR API KEY" 
+#define  API_HOST @"http://api.dol.gov"
+#define API_URL @"/V1"
+/////////////////////////////////////
+ 
+//Instantiate  Gov Data context object
+//This  object stores the API information required to make requests
+GOVDataContext *context = [[GOVDataContext alloc] initWithAPIKey:API_KEY Host:API_HOST SharedSecret:API_SECRET APIURL:API_URL]
+ 
+//Instantiate  new request object. Pass the context that contains all the API key info.  This object is used even when there is no API key.
+GOVDataRequest *dataRequest = [[GOVDataRequest alloc]initWithContext:context];
+ 
+//Set  this class as the one that responds to the delegate methods 
+dataRequest.delegate = self; 
+ 
+//API  you want to fetch data from 
+NSString *method = @"FORMS/Agencies"; 
+ 
+//Build NSDictionary arguments
+//Example to retrieve top 10 records and just get one field. 
+NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:@"10", @"top", @"AgencyName", @"select", nil];
+ 
+//Set the timeout.  Set this higher for long-loading APIs
+int timeOut = 20;
+ 
+//Make API call
+[dataRequest callAPIMethod:method withArguments:arguments andTimeOut:timeOut];</pre><p> </p>
+<h3><a name="Federal" id="Federal"></a>Using This SDK With APIs From Other Federal Agencies</h3>
+<p> </p>
+<p>The example above uses DOL's API. Some federal APIs' URLs are structured differently. For example, let's look at <a href="http://data.fcc.gov/api/block/find?latitude=40.0&amp;longitude=-85">http://data.fcc.gov/api/block/find?latitude=40.0&amp;longitude=-85</a></p>
+<ul><li>API_KEY = ""</li>
+<li>API_SECRET = ""</li>
+<li>API_Host = "<a href="http://data.fcc.gov">http://data.fcc.gov</a>"</li>
+<li>API_URL = "/api/block"</li>
+<li>method = "find"</li>
+</ul><p> </p>
+<p>Let's look at the Census Bureau. For example, <a href="http://api.census.gov/data/2010/acs5?key=">http://api.census.gov/data/2010/acs5?key=</a>{your key}&amp;get=B02001_001E,NAME&amp;for=state:06,36</p>
+<ul><li>API_KEY = "YOUR_API_KEY"</li>
+<li>API_SECRET = ""</li>
+<li>API_Host = "<a href="http://api.census.gov">http://api.census.gov</a>"</li>
+<li>API_URL = "/data/2010"</li>
+<li>method = "acs5"</li>
+</ul><p> </p>
+<p><u>Sample code to make requests for DOL Service Operation (e.g Summer Jobs Plus) :</u></p>
+<pre class="prettyprint lang-c">
+//API  and URL constants
+#define API_KEY @"YOUR API KEY" 
+#define API_SECRET @"YOUR SHARED SECRET" 
+#define  API_HOST @"http://api.dol.gov"
+/////////////////////////////////////
+ 
+//Instantiate  Gov Data context object
+//This  object stores the API information required to make requests
+GOVDataContext *context = [[GOVDataContext alloc] initWithAPIKey:API_KEY Host:API_HOST SharedSecret:API_SECRET APIURL:API_URL]
+ 
+//Instantiate  new request object. Pass the context that contains all the API key info.  This object is used even when there is no API key.
+GOVDataRequest *dataRequest = [[GOVDataRequest alloc]initWithContext:context];
+ 
+//Set  this class as the one that responds to the delegate methods 
+dataRequest.delegate = self; 
+ 
+//API  you want to fetch data from 
+NSString *method = @"SummerJobs/getJobsListing"; 
+ 
+//Build NSDictionary arguments
+//set value of format,query,region,locality and skipcount
+//Please Note : Each String typed parameter must be surrounded in quotes in order to work correctly. 
+//These quotes are then Url encoded and passed to the Service Operation.
+//Each parameter that is assigned null should be left blank
+ 
+//Please note:  the iOS SDK does not support the SummerJobs service at this time.
+ 
+NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:@"'xml'", @"format", @"'farm'", @"query", @"", @"region", @"", @"locality", @"1", @"skipcount", nil];
+ 
+//Set the timeout.  Set this higher for long-loading APIs
+int timeOut = 20;
+ 
+//Make API call
+[dataRequest callAPIMethod:method withArguments:arguments andTimeOut:timeOut];</pre><p> </p>
+<p>The callAPIMethod triggers the SDK to process the request, add authorization headers and invoke the delegate methods with the results or with an error message. Once the process has completed one of the three delegate methods from the GOVDataRequestDelegate protocol will be called. If successful, the <strong>didCompleteWithResults</strong> or <strong>didCompleteWithDictionaryResults</strong> method will be called and the resultsArray or resultsDictionary parameter, depending on the format of the data you received, will contain the data you requested. If the request failed for any reason, the <strong>didCompleteWithError</strong> will be called and the error parameter will contain a description of the error.</p>
+<p> </p>
+<pre class="prettyprint">
+//Results  delegate
+-(void)govDataRequest:(GOVDataRequest *)request didCompleteWithResults:(NSArray *)resultsArray {
+     //for Standard DOL API datasets
+	           //Add your code here
+	           //resultsArray is an array of NSDictionaries
+	           //One NSDictionary per table row 
+    //for Standard DOL Data service - Summer job Plus,
+	           //Add your code here
+	           //resultsArray is an array of NSDictionaries
+	           //Get the value of first key from NSDictionary in form of NSDictionaries.
+		   //From NSDictionaries , look for "getJobsListing" which return the NSDictionary object.
+		   //From getJobsListing object which is type of NSDictionaries , object using key "items" , result is an array , each element in array is job result.
+			
+}
+ 
+-(void)govDataRequest:(GOVDataRequest *)request didCompleteWithDictionaryResults:(NSDictionary *)resultsDictionary {
+    
+    // for web services that are not processed by the SDK as an array. For example, the FCC's Public Inspection Files API
+    // consult the API's documentation regarding data structure or use NSLog to inspect the data
+}
+ 
+ 
+//Error delegate  
+-(void)govDataRequest:(GOVDataRequest *)request didCompleteWithError:(NSString *)error {
+	//Add your code here to show  / handle error
+}
+ 
+// Catch-all delegate
+-(void)govDataRequest:(GOVDataRequest *)request didCompleteWithUnParsedResults:(NSString *)resultsString {
+ 
+    // Delegate to catch any data that could not be parsed
+    
+}</pre><p>
+<a name="method" id="method"></a></p>
+<h3>API Method Arguments</h3>
+<p><a name="API" id="API"></a></p>
+<h3>Standard DOL API datasets</h3>
+<h4><a name="top" id="top"></a>top</h4>
+<p>The top argument is used to specify the number of records to be returned.</p>
+<p>Example:</p>
+<pre class="prettyprint">
+NSDictionary *args = [NSDictionary dictionaryWithObject:@"2" forKey:@"top"];</pre><p> </p>
+<h4><a name="skip" id="skip">skip</a></h4>
+<p> </p>
+<p>The skip argument specifies that you want the service to skip a specified number of results. This argument in combination with top, serve as the basis to implement pagination.</p>
+<p>Example:</p>
+<pre class="prettyprint">
+//Return records 21-30
+NSDictionary  *arguments = [NSDictionary dictionaryWithObjectsAndKeys:@"10", @"top", @"20", @"skip", nil];</pre><p> </p>
+<h4><a name="select" id="select">select</a></h4>
+<p> </p>
+<p>The select argument allows you to specify the exact columns that you want the API to return. Separate them with commas if there is more than one.</p>
+<p>In order to save bandwidth, it is always a good idea to add a select clause to most requests and retrieve the columns needed for a specific function. Some datasets can contain dozens of columns and the performance of your app can be impacted if you always return all of the columns. This is even more important in mobile applications because of device memory limitations, possible slow network speeds, and data usage caps imposed by carriers.</p>
+<p>Example:</p>
+<pre class="prettyprint">
+//Select the AgencyId and AgencyFormNumber columns
+NSDictionary *args = [NSDictionary dictionaryWithObject:@"AgencyId,AgencyFormNumber" forKey:@"select"];</pre><p> </p>
+<h4><a name="order" id="order">orderby</a></h4>
+<p> </p>
+<p>Use the orderby argument to sort the data by one or more columns. Separate them with commas if there is more than one.</p>
+<pre class="prettyprint">
+//Order by the AgencyFormNumber column
+NSDictionary *args = [NSDictionary dictionaryWithObject:@"AgencyFormNumber" forKey:@"orderby"];</pre><p> </p>
+<h4><a name="filter" id="filter">filter</a></h4>
+<p> </p>
+<p>The filter argument is used to add filters to the API query. For example, you can filter results where a specific column is equal to a string provided.</p>
+<p>The API recognizes the following comparison keywords:<br /><strong>eq</strong> – Equal to<br /><strong>ne</strong> – Not Equal to<br /><strong>gt</strong> – Greater than<br /><strong>lt</strong> – Less than<br /><strong>ge</strong> – Greater than or equal to<br /><strong>le</strong> – Less than or equal to</p>
+<p>For string comparisons enclose any multiple word string in single quotes. For example: <strong>'Legal Identity Report'</strong></p>
+<p>More than one filter can be specified by joining them with the <strong>and</strong>/<strong>or</strong> keywords. Separate filters with parenthesis.<br />
+For example: <strong>(AgencyId eq 'MSHA') and (Title eq 'Legal Identity Report') </strong>retrieves the records where the value in the AgencyId column is equal to 'MSHA' and the value for the Title column is equal to 'Legal Identity Report'.</p>
+<p>Example:</p>
+<pre class="prettyprint">
+NSDictionary *args = [NSDictionary dictionaryWithObject: :@"(AgencyId eq  'MSHA') and (Title eq 'Legal Identity Report')" forKey:@"filter"];</pre><p><br clear="all" /></p>
+<!--
+<a name="service"><p></a></p>
+<h3>DOL Service Operation for  Summer Jobs Plus</h3>
+<p>To use the Service Operations API the Operation name and parameters need to be supplied using the data services format. Each String typed parameter must be surrounded in quotes in order to work correctly.  These quotes are then Url encoded and passed to the Service Operation.<br />
+Each integer typed parameter must be entered without quotes in order to work correctly.Each parameter that is assigned null should be left blank.<br />
+<br>
+</p>
+<h4><a name="format">format</a></h4>
+<p>The format argument allows you to specify the format that the results string will be returned. If format argument is not passed with request then result will be returned in json format by default.<br />
+	Following are the supported format of results string.</p>
+<p>
+<label><a name="formatcodes"></a>Format Codes:</label><br><br />
+json ( Default )<br><br />
+xml<br><br />
+atom<br>
+</p>
+<p>Example:</p>
+<pre class="prettyprint">//Create a dictionary of arguments
+ NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:@&quot;'json'@&quot;, @&quot;format@&quot;, nil];
+</pre><p>  <br clear="all"></p>
+<h4><a name="query">query</a></h4>
+<p>The query argument will be used to find matching job listings. This is required if region or locality are not provided.</p>
+<p>Example:</p>
+<pre class="prettyprint">//Create a dictionary of arguments
+NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:@&quot;'json'@&quot;, @&quot;format@&quot;, @&quot;'farm'&quot;, @&quot;query&quot;, nil];
+</pre><p>  <br clear="all"></p>
+<h4><a name="region">region</a></h4>
+<p>The region argument will be used to filter jobs listings by the state name or abbreviation. This is required if query or locality are not provided.</p>
+<p>Example:</p>
+<pre class="prettyprint">//Create a dictionary of arguments
+NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:@&quot;'json'@&quot;, @&quot;format@&quot;, @&quot;'farm'&quot;, @&quot;query&quot;, @&quot;&quot;, @&quot;region&quot;, nil];
+</pre><p>  <br clear="all"></p>
+<h4><a name="locality">locality</a></h4>
+<p>The region argument will be used to filter jobs listings by The city name. This is required if query or region  are not provided.</p>
+<p>Example:</p>
+<pre class="prettyprint">//Create a dictionary of arguments
+NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:@&quot;'json'@&quot;, @&quot;format@&quot;, @&quot;'farm'&quot;, @&quot;query&quot;, @&quot;&quot;, @&quot;region&quot;,@&quot;&quot;, @&quot;locality&quot;, nil];
+</pre><p>  <br clear="all"></p>
+<h4><a name="skipCount">skipCount</a></h4>
+<p>The skipCount argument will be used to specify the number of records to skip ahead from the first recor.Valid range of 1-99 and it required.</p>
+<p>Example:</p>
+<pre class="prettyprint">//Create a dictionary of arguments
+NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:@&quot;'json'@&quot;, @&quot;format@&quot;, @&quot;'farm'&quot;, @&quot;query&quot;, @&quot;&quot;, @&quot;region&quot;,@&quot;&quot;, @&quot;locality&quot;,@&quot;1&quot;, @&quot;skipcount&quot;, nil];
+</pre><p>-->
+<p> </p>
+<p> </p>
+<h2>Licenses</h2>
+<p> </p>
+<p> </p>
+<p>The GOVData and DOLData classes (whose file names start with GOVData or DOLData) are released to the Public Domain.</p>
+<p>This SDK makes use of other libraries that are licensed differently. Please read them carefully.</p>
+<h3><a name="sbjson" id="sbjson">SBJSON</a></h3>
+<p><a name="sbjson" id="sbjson"> </a></p>
+<p><a name="sbjson" id="sbjson">/*<br />
+Copyright (C) 2009-2010 Stig Brautaset. All rights reserved.</a></p>
+<p>Redistribution and use in source and binary forms, with or without<br />
+modification, are permitted provided that the following conditions are met:</p>
+<p>* Redistributions of source code must retain the above copyright notice, this<br />
+list of conditions and the following disclaimer.</p>
+<p>* Redistributions in binary form must reproduce the above copyright notice,<br />
+this list of conditions and the following disclaimer in the documentation<br />
+and/or other materials provided with the distribution.</p>
+<p>* Neither the name of the author nor the names of its contributors may be used<br />
+to endorse or promote products derived from this software without specific<br />
+prior written permission.</p>
+<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"<br />
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE<br />
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE<br />
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE<br />
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL<br />
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR<br />
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER<br />
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,<br />
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE<br />
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.<br />
+*/</p>
+<h3><a name="sbjson" id="sbjson"></a><a name="mccurlconnection" id="mccurlconnection"></a>MCCURLConnection</h3>
+<p>MCCURLConnection<br />
+Copyright (c), 2012 Thierry Passeron<br />
+The MIT License<br />
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:<br />
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.<br />
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+<h3><a name="reach" id="reach"></a>Reachability</h3>
+<p>Extensions Copyright (C) 2009 Donoho Design Group, LLC. All Rights Reserved.</p>
+<p>Redistribution and use in source and binary forms, with or without<br />
+modification, are permitted provided that the following conditions are<br />
+met:</p>
+<p>* Redistributions of source code must retain the above copyright notice,<br />
+this list of conditions and the following disclaimer.</p>
+<p>* Redistributions in binary form must reproduce the above copyright<br />
+notice, this list of conditions and the following disclaimer in the<br />
+documentation and/or other materials provided with the distribution.</p>
+<p>* Neither the name of Andrew W. Donoho nor Donoho Design Group, L.L.C.<br />
+may be used to endorse or promote products derived from this software<br />
+without specific prior written permission.</p>
+<p>THIS SOFTWARE IS PROVIDED BY DONOHO DESIGN GROUP, L.L.C. "AS IS" AND ANY<br />
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE<br />
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR<br />
+PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR<br />
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,<br />
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,<br />
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR<br />
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF<br />
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING<br />
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS<br />
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<p>*/</p>
+<p>/*</p>
+<p>Apple's Original License on Reachability v2.0</p>
+<p>Disclaimer: IMPORTANT: This Apple software is supplied to you by Apple Inc.<br />
+("Apple") in consideration of your agreement to the following terms, and your<br />
+use, installation, modification or redistribution of this Apple software<br />
+constitutes acceptance of these terms. If you do not agree with these terms,<br />
+please do not use, install, modify or redistribute this Apple software.</p>
+<p>In consideration of your agreement to abide by the following terms, and subject<br />
+to these terms, Apple grants you a personal, non-exclusive license, under<br />
+Apple's copyrights in this original Apple software (the "Apple Software"), to<br />
+use, reproduce, modify and redistribute the Apple Software, with or without<br />
+modifications, in source and/or binary forms; provided that if you redistribute<br />
+the Apple Software in its entirety and without modifications, you must retain<br />
+this notice and the following text and disclaimers in all such redistributions<br />
+of the Apple Software.</p>
+<p>Neither the name, trademarks, service marks or logos of Apple Inc. may be used<br />
+to endorse or promote products derived from the Apple Software without specific<br />
+prior written permission from Apple. Except as expressly stated in this notice,<br />
+no other rights or licenses, express or implied, are granted by Apple herein,<br />
+including but not limited to any patent rights that may be infringed by your<br />
+derivative works or by other works in which the Apple Software may be<br />
+incorporated.</p>
+<p>The Apple Software is provided by Apple on an "AS IS" basis. APPLE MAKES NO<br />
+WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION THE IMPLIED<br />
+WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS FOR A PARTICULAR<br />
+PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND OPERATION ALONE OR IN<br />
+COMBINATION WITH YOUR PRODUCTS.</p>
+<p>IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL OR<br />
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE<br />
+GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)<br />
+ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION, MODIFICATION AND/OR<br />
+DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED AND WHETHER UNDER THEORY OF<br />
+CONTRACT, TORT (INCLUDING NEGLIGENCE), STRICT LIABILITY OR OTHERWISE, EVEN IF<br />
+APPLE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<p>Copyright (C) 2009 Apple Inc. All Rights Reserved.</p>
+<p>*/</p>
+<h3><a name="XMLReader" id="XMLReader"></a>XMLReader</h3>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy<br />
+of this software and associated documentation files (the "Software"), to deal<br />
+in the Software without restriction, including without limitation the rights<br />
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell<br />
+copies of the Software, and to permit persons to whom the Software is<br />
+furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in<br />
+all copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR<br />
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,<br />
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE<br />
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER<br />
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,<br />
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN<br />
+THE SOFTWARE.</p>
+<!-- END CONTENT HERE  *************************************************** -->
+<!---original location of this file: "/includes/" -->
+
+</div><!--Body End -->
+
+ </div>
+
+	<!--Footer Start -->
+	<div id="Footer">
+		<div id="FooterMenu">
+			<div id="FooterMenuContainer">
+				<a href="http://www.dol.gov/dol/foia/main.htm">Freedom of Information Act</a>&nbsp;|&nbsp;
+
+				<a href="http://www.dol.gov/dol/privacynotice.htm">Privacy & Security Statement</a>&nbsp;|&nbsp;
+				<a href="http://www.dol.gov/dol/disclaim.htm">Disclaimers</a>&nbsp;|&nbsp;
+				<a href="http://webapps.dol.gov/feedback/FeedbackSurvey.aspx">Customer Survey</a>&nbsp;|&nbsp;
+				<a href="http://www.dol.gov/dol/aboutdol/website-policies.htm">Important Web Site Notices</a>&nbsp;|&nbsp;
+
+                <a href="http://www.dol.gov/dol/aboutdol/plug-ins.htm">Plug-ins Used by DOL</a>
+			</div>
+		</div>
+	
+		<div id="FooterContact">
+			<div id="FooterContactContainer">
+				U.S. Department of Labor&nbsp;|&nbsp;Frances Perkins Building, 200 Constitution Ave., NW, Washington, DC 20210<br>
+
+				<a href="http://www.dol.gov" style=" text-decoration: underline; ">www.dol.gov</a>&nbsp;|&nbsp;Telephone: 1-866-4-USA-DOL (1-866-487-2365)&nbsp;|&nbsp;TTY: 1-877-889-5627&nbsp;|&nbsp;<u><a href="http://www.dol.gov/dol/contact/index.htm">Contact Us</a></u>
+			</div>
+		</div>
+	</div>
+	<!--Footer End -->
+
+
+</div><!--Main End -->
+
+  </BODY>
+</HTML>
