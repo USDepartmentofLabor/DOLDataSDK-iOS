@@ -13,6 +13,9 @@
 #import "JSON.h"
 #import "XMLReader.h"
 
+NSString* const URL_API_V1 = @"http://api.dol.gov";
+NSString* const URL_API_V2 = @"https://qaweblv10.opadev.dol.gov/apiv2-restserver";
+
 @implementation GOVDataRequest
 
 @synthesize delegate,context;
@@ -55,9 +58,9 @@
     if (self.context.APIHost == nil || self.context.APIURL == nil) {
         [self.delegate govDataRequest:self didCompleteWithError:@"A valid context object was not provided."];
         return;
-    } else if ([self.context.APIHost isEqualToString:@"http://api.dol.gov"]) {
+    } else if (self.context.APIHost == URL_API_V1) {
         // Checks required for DOL's API
-        if (self.context.APIKey == nil || self.context.SharedSecret == nil) {
+        if (self.context.APIKey == nil) {
             [self.delegate govDataRequest:self didCompleteWithError:@"A valid context object was not provided."];
             return;
         }
@@ -73,9 +76,13 @@
     
     
     // Where appropriate, add the key.
-    if ([self.context.APIHost isEqualToString:@"http://api.dol.gov"]) {
+    if (self.context.APIHost == URL_API_V1) {
         [queryString appendFormat:@"?KEY=%@", [self.context.APIKey urlEncoded]];
-    } else if ([self.context.APIHost isEqualToString:@"http://api.census.gov"] ||
+    }
+    else if (self.context.APIHost == URL_API_V2) {
+        [queryString appendString:@"/"];
+    }
+    else if ([self.context.APIHost isEqualToString:@"http://api.census.gov"] ||
                [self.context.APIHost isEqualToString:@"http://pillbox.nlm.nih.gov"]){
         [queryString appendFormat:@"?key=%@", self.context.APIKey];
     } else if ([self.context.APIHost isEqualToString:@"http://api.eia.gov"]
@@ -94,7 +101,7 @@
         NSString *value = [arguments objectForKey:key];
         
         // Contstruct arguments part of query string for DOL's API
-        if ([self.context.APIHost isEqualToString:@"http://api.dol.gov"]) {
+        if (self.context.APIHost  == URL_API_V1) {
       //      NSLog(@"Host is DOL!");
             //Build argument querystring. Process only valid arguments and ignore the rest
             if ([key isEqualToString:@"top"] || [key isEqualToString:@"skip"] || [key isEqualToString:@"select"]
@@ -108,7 +115,20 @@
                 
                 [queryString appendFormat:@"&%@=%@",key, [value urlEncoded]];
             }
-        } else if ([self.context.APIHost isEqualToString:@"http://api.census.gov"] ||
+        }
+        
+        else if (self.context.APIHost == URL_API_V2) {
+            [queryString appendString:key];
+            [queryString appendString:@"/"];
+            [queryString appendString:[value urlEncoded]];
+            [queryString appendString:@"/"];
+            
+        }
+        
+        
+        
+        
+        else if ([self.context.APIHost isEqualToString:@"http://api.census.gov"] ||
                    [self.context.APIHost isEqualToString:@"http://pillbox.nlm.nih.gov"]){
             /*
              CENSUS.GOV API
@@ -200,7 +220,7 @@
     
     
     // DOL
-    if ([self.context.APIHost isEqualToString:@"http://api.dol.gov"]) {
+    if (self.context.APIHost == URL_API_V1) {
         //Add request header to the request
 //        [request addRequestHeader:@"Accept" value:@"application/json"];
         // Create a mutable copy of the immutable request and add more headers
@@ -213,6 +233,43 @@
         // Log the output to make sure our new headers are there
     //    NSLog(@"%@", request.allHTTPHeaderFields);
     }
+    else if (self.context.APIHost == URL_API_V2) {
+        //NSInteger success = 1;
+         NSMutableURLRequest *mutableRequest = [request mutableCopy];
+        [mutableRequest addValue:@"application/json" forHTTPHeaderField:@"Accept"];
+        [mutableRequest addValue:self.context.APIKey forHTTPHeaderField:@"X-API-KEY"];
+        request = [mutableRequest copy];
+        
+        NSTimeInterval then = [[NSDate date] timeIntervalSinceReferenceDate];
+        NSError *requestError = [[NSError alloc] init];
+        NSHTTPURLResponse *response = nil;
+        NSData *urlData = [NSURLConnection sendSynchronousRequest:request
+                                                returningResponse:&response
+                                                            error:&requestError];
+        
+        if ([response statusCode] >= 200 && [response statusCode] < 300) {
+            NSError *serializeError = nil;
+            NSArray *results = [NSJSONSerialization JSONObjectWithData:urlData options:NSJSONReadingMutableContainers error:&serializeError];
+        
+            //success = [results[@"ERROR"] integerValue];
+            
+            NSTimeInterval now = [[NSDate date] timeIntervalSinceReferenceDate];
+                
+            double elapsedTime = now - then;
+            [self.delegate govDataRequest:self didCompleteWithResults:results andResponseTime:elapsedTime];
+ 
+            return;
+            
+            
+        }
+        
+        request = nil;
+        
+        
+    }
+    
+    if (self.context.APIHost != URL_API_V2) {
+    
     
     //Get current date/time
     NSTimeInterval then = [[NSDate date] timeIntervalSinceReferenceDate];
@@ -305,6 +362,7 @@
 
     }];
     request = nil;
+    }
 }
 
 

@@ -14,11 +14,11 @@
 }
 
 @property (nonatomic, copy) NSString *APIKey;
-@property (nonatomic, copy) NSString *SharedSecret;
+//@property (nonatomic, copy) NSString *SharedSecret;
 @property (nonatomic, copy) NSString *APIHost;
 @property (nonatomic, copy) NSString *APIURL;
 
 
--(id)initWithAPIKey:(NSString *)key Host:(NSString *)host SharedSecret:(NSString *)secret APIURL:(NSString *)API_URL;
+-(id)initWithAPIKey:(NSString *)key Host:(NSString *)host APIURL:(NSString *)API_URL;
 
 @end

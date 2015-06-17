@@ -10,6 +10,9 @@
 //#import "ASIHTTPRequest.h"
 #import "GOVDataContext.h"
 
+extern NSString* const URL_API_V1;
+extern NSString* const URL_API_V2;
+
 //Declare delegate for callback. Full declaration below interface.
 @protocol GOVDataRequestDelegate;
 

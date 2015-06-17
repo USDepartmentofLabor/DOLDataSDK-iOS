@@ -14,9 +14,9 @@
 @synthesize APIKey = _APIKey;
 @synthesize APIHost = _APIHost;
 @synthesize APIURL = _APIURL;
-@synthesize SharedSecret = _SharedSecret;
+//@synthesize SharedSecret = _SharedSecret;
 
--(id)initWithAPIKey:(NSString *)key Host:(NSString *)host SharedSecret:(NSString *)secret APIURL:(NSString *)API_URL {
+-(id)initWithAPIKey:(NSString *)key Host:(NSString *)host APIURL:(NSString *)API_URL {
     if (!(self = [super init]))
         return nil;
 
@@ -24,7 +24,7 @@
     self.APIURL = API_URL;
     self.APIHost = host;
     self.APIKey = key;
-    self.SharedSecret = secret;
+    //self.SharedSecret = secret;
     
     return self;
 }
