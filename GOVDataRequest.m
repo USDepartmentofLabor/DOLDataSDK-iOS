@@ -14,7 +14,7 @@
 #import "XMLReader.h"
 
 NSString* const URL_API_V1 = @"http://api.dol.gov";
-NSString* const URL_API_V2 = @"https://qaweblv10.opadev.dol.gov/apiv2-restserver";
+NSString* const URL_API_V2 = @"https://data.dol.gov";
 
 @implementation GOVDataRequest
 
@@ -203,13 +203,7 @@ NSString* const URL_API_V2 = @"https://qaweblv10.opadev.dol.gov/apiv2-restserver
     }
     /*
      
-     
-     
-     
      look right below!
-    
-     
-     
      
      */
     //Create request
@@ -233,40 +227,53 @@ NSString* const URL_API_V2 = @"https://qaweblv10.opadev.dol.gov/apiv2-restserver
         // Log the output to make sure our new headers are there
     //    NSLog(@"%@", request.allHTTPHeaderFields);
     }
+    
     else if (self.context.APIHost == URL_API_V2) {
-        //NSInteger success = 1;
-         NSMutableURLRequest *mutableRequest = [request mutableCopy];
+        NSMutableURLRequest *mutableRequest = [request mutableCopy];
         [mutableRequest addValue:@"application/json" forHTTPHeaderField:@"Accept"];
         [mutableRequest addValue:self.context.APIKey forHTTPHeaderField:@"X-API-KEY"];
         request = [mutableRequest copy];
         
         NSTimeInterval then = [[NSDate date] timeIntervalSinceReferenceDate];
-        NSError *requestError = [[NSError alloc] init];
-        NSHTTPURLResponse *response = nil;
-        NSData *urlData = [NSURLConnection sendSynchronousRequest:request
-                                                returningResponse:&response
-                                                            error:&requestError];
+        //NSError *requestError = [[NSError alloc] init];
+        //NSHTTPURLResponse *response = nil;
         
-        if ([response statusCode] >= 200 && [response statusCode] < 300) {
-            NSError *serializeError = nil;
-            NSArray *results = [NSJSONSerialization JSONObjectWithData:urlData options:NSJSONReadingMutableContainers error:&serializeError];
+        [NSURLConnection
+            sendAsynchronousRequest:request
+            queue:[[NSOperationQueue alloc] init]
+            completionHandler:^(NSURLResponse *response,
+                                NSData *urlData,
+                                NSError *requestError) {
+             if ([urlData length] >0 && requestError == nil) {
+                 NSError *serializeError = nil;
+                 NSArray *results = [NSJSONSerialization JSONObjectWithData:urlData options:NSJSONReadingMutableContainers error:&serializeError];
+                 
+                 //success = [results[@"ERROR"] integerValue];
+                 
+                 NSTimeInterval now = [[NSDate date] timeIntervalSinceReferenceDate];
+                 
+                 double elapsedTime = now - then;
+                 [self.delegate govDataRequest:self didCompleteWithResults:results andResponseTime:elapsedTime];
+                 
+                 return;
+
+             }
+             else if ([urlData length] == 0 && requestError == nil)
+             {
+                 NSLog(@"No data returned.");
+             }
+             else if (requestError != nil){
+                 NSLog(@"Error = %@", requestError);
+             }
+         }];
         
-            //success = [results[@"ERROR"] integerValue];
-            
-            NSTimeInterval now = [[NSDate date] timeIntervalSinceReferenceDate];
-                
-            double elapsedTime = now - then;
-            [self.delegate govDataRequest:self didCompleteWithResults:results andResponseTime:elapsedTime];
- 
-            return;
-            
-            
-        }
         
-        request = nil;
+        //request = nil;
         
         
     }
+
+    
     
     if (self.context.APIHost != URL_API_V2) {
     
